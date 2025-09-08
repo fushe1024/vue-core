@@ -1,0 +1,22 @@
+{
+  "name": "@vue-core/compiler-ssr",
+  "version": "1.0.0",
+  "description": "@vue-core/compiler-ssr",
+  "main": "index.js",
+  "module": "dist/compiler-ssr.esm-bundler.js",
+  "types": "dist/compiler-ssr.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "formats": [
+      "esm-bundler",
+      "cjs"
+    ]
+  },
+  "dependencies": {
+    "@vue-core/compiler-dom": "workspace:*",
+    "@vue-core/shared": "workspace:*"
+  }
+}

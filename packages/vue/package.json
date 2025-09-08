@@ -1,0 +1,28 @@
+{
+  "name": "@vue-core/vue",
+  "version": "1.0.0",
+  "description": "@vue-core/vue",
+  "main": "index.js",
+  "module": "dist/vue.esm-bundler.js",
+  "unpkg": "dist/vue.global.js",
+  "jsdelivr": "dist/vue.global.js",
+  "types": "dist/vue.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "name": "Vue",
+    "formats": [
+      "esm-bundler",
+      "esm-browser",
+      "cjs",
+      "global"
+    ]
+  },
+  "dependencies": {
+    "@vue-core/compiler-dom": "workspace:*",
+    "@vue-core/runtime-dom": "workspace:*",
+    "@vue-core/server-renderer": "workspace:*"
+  }
+}

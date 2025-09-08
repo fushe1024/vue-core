@@ -1,0 +1,18 @@
+{
+  "name": "@vue-core/shared",
+  "version": "1.0.0",
+  "description": "internal utils shared across @vue-core packages",
+  "main": "index.js",
+  "module": "dist/shared.esm-bundler.js",
+  "types": "dist/shared.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "formats": [
+      "esm-bundler",
+      "cjs"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@vue-core/server-renderer",
+  "version": "1.0.0",
+  "description": "@vue-core/server-renderer",
+  "main": "index.js",
+  "module": "dist/server-renderer.esm-bundler.js",
+  "types": "dist/server-renderer.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "formats": [
+      "esm-bundler",
+      "cjs"
+    ]
+  },
+  "dependencies": {
+    "@vue-core/runtime-core": "workspace:*",
+    "@vue-core/shared": "workspace:*"
+  }
+}

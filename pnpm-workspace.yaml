@@ -1,0 +1,3 @@
+# 定义 packages 目录
+packages:
+  - 'packages/*'

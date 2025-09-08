@@ -1,0 +1,19 @@
+{
+  "name": "@vue-core/compiler-core",
+  "version": "1.0.0",
+  "description": "@vue-core/compiler-core",
+  "main": "index.js",
+  "module": "dist/compiler-core.esm-bundler.js",
+  "types": "dist/compiler-core.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "name": "VueCoreCompilerCore",
+    "formats": [
+      "esm-bundler",
+      "cjs"
+    ]
+  }
+}

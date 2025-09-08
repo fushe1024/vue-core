@@ -1,0 +1,23 @@
+{
+  "name": "@vue-core/compiler-dom",
+  "version": "1.0.0",
+  "description": "@vue-core/compiler-dom",
+  "main": "index.js",
+  "module": "dist/compiler-dom.esm-bundler.js",
+  "types": "dist/compiler-dom.d.ts",
+  "unpkg": "dist/compiler-dom.global.js",
+  "jsdelivr": "dist/compiler-dom.global.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "buildOptions": {
+    "name": "VueCoreCompilerDom",
+    "formats": [
+      "esm-bundler",
+      "esm-browser",
+      "cjs",
+      "global"
+    ]
+  }
+}
