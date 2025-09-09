@@ -21,13 +21,89 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
 
+  packages/compiler-core: {}
+
+  packages/compiler-dom: {}
+
+  packages/compiler-sfc:
+    dependencies:
+      '@vue-core/compiler-core':
+        specifier: workspace:*
+        version: link:../compiler-core
+      '@vue-core/compiler-dom':
+        specifier: workspace:*
+        version: link:../compiler-dom
+      '@vue-core/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/compiler-ssr:
+    dependencies:
+      '@vue-core/compiler-dom':
+        specifier: workspace:*
+        version: link:../compiler-dom
+      '@vue-core/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/reactivity:
     dependencies:
       '@vue-core/shared':
         specifier: workspace:*
         version: link:../shared
 
+  packages/runtime-core:
+    dependencies:
+      '@vue-core/reactivity':
+        specifier: workspace:*
+        version: link:../reactivity
+      '@vue-core/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/runtime-dom:
+    dependencies:
+      '@vue-core/runtime-core':
+        specifier: workspace:*
+        version: link:../runtime-core
+      '@vue-core/shared':
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/runtime-test:
+    dependencies:
+      '@vue-core/runtime-core':
+        specifier: workspace:*
+        version: link:../runtime-core
+
+  packages/server-renderer:
+    dependencies:
+      '@vue-core/runtime-core':
+        specifier: workspace:*
+        version: link:../runtime-core
+      '@vue-core/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   packages/shared: {}
+
+  packages/vue:
+    dependencies:
+      '@vue-core/compiler-dom':
+        specifier: workspace:*
+        version: link:../compiler-dom
+      '@vue-core/runtime-dom':
+        specifier: workspace:*
+        version: link:../runtime-dom
+      '@vue-core/server-renderer':
+        specifier: workspace:*
+        version: link:../server-renderer
+
+  packages/vue-compat:
+    dependencies:
+      '@vue-core/vue':
+        specifier: workspace:*
+        version: link:../vue
 
 packages:
 

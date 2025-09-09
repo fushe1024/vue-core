@@ -10,13 +10,10 @@
     "dist"
   ],
   "buildOptions": {
+    "name": "VueCoreServerRenderer",
     "formats": [
       "esm-bundler",
       "cjs"
     ]
-  },
-  "dependencies": {
-    "@vue-core/runtime-core": "workspace:*",
-    "@vue-core/shared": "workspace:*"
   }
 }

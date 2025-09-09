@@ -15,20 +15,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // 入口文件
 const entry = resolve(__dirname, `../packages/${target}/src/index.ts`)
 const pkg = require(resolve(__dirname, `../packages/${target}/package.json`))
- 
-esbuild.context({
-  entryPoints: [entry],
-  outfile: resolve(
-    __dirname,
-    `../packages/${target}/src/dist/${target}.${format}.js`
-  ),
-  bundle: true,
-  sourcemap: true, // 生成 sourcemap 文件
-  format, // 输出格式
-  platform: 'browser', // 浏览器环境 
-  target: 'es2016', // 目标环境
-  globalName: pkg.buildOptions?.name, // 全局变量名
-}).then(ctx => {
-  ctx.watch()
-  console.log('watching...')
-})
+
+esbuild
+  .context({
+    entryPoints: [entry],
+    outfile: resolve(
+      __dirname,
+      `../packages/${target}/dist/${target}.${format}.js`
+    ),
+    bundle: true,
+    sourcemap: true, // 生成 sourcemap 文件
+    format, // 输出格式
+    platform: 'browser', // 浏览器环境
+    target: 'es2016', // 目标环境
+    globalName: pkg.buildOptions?.name, // 全局变量名
+  })
+  .then(ctx => {
+    ctx.watch()
+    console.log('watching...')
+  })

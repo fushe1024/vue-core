@@ -10,12 +10,10 @@
     "dist"
   ],
   "buildOptions": {
+    "name": "VueCoreVueCompat",
     "formats": [
       "esm-bundler",
       "cjs"
     ]
-  },
-  "dependencies": {
-    "@vue-core/vue": "workspace:*"
   }
 }

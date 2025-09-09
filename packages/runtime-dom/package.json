@@ -13,13 +13,7 @@
     "name": "VueCoreRuntimeDom",
     "formats": [
       "esm-bundler",
-      "esm-browser",
-      "cjs",
-      "global"
+      "cjs"
     ]
-  },
-  "dependencies": {
-    "@vue-core/runtime-core": "workspace:*",
-    "@vue-core/shared": "workspace:*"
   }
 }

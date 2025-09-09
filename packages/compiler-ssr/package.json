@@ -10,13 +10,10 @@
     "dist"
   ],
   "buildOptions": {
+    "name": "VueCoreCompilerSsr",
     "formats": [
       "esm-bundler",
       "cjs"
     ]
-  },
-  "dependencies": {
-    "@vue-core/compiler-dom": "workspace:*",
-    "@vue-core/shared": "workspace:*"
   }
 }

@@ -10,12 +10,10 @@
     "dist"
   ],
   "buildOptions": {
+    "name": "VueCoreRuntimeTest",
     "formats": [
       "esm-bundler",
       "cjs"
     ]
-  },
-  "dependencies": {
-    "@vue-core/runtime-core": "workspace:*"
   }
 }
