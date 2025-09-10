@@ -3,33 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>reactive 函数</title>
+    <title>ref 函数</title>
   </head>
   <body>
     <div id="app"></div>
     <script type="module">
-      import { reactive, effect } from '../dist/reactivity.esm.js'
+      import { ref, effect } from '../dist/reactivity.esm.js'
 
       // 响应式数据
-      const obj = reactive({
-        name: '张三',
-        age: 18,
-        userinfo: {
-          sex: '男',
-          height: 1.88,
-        },
-      })
+      const obj = ref(true)
 
       console.log(obj)
 
       // 副作用函数
       effect(() => {
-        app.innerHTML = `姓名：${obj.name}, 年龄：${obj.age}`
+        app.innerHTML = `${obj.value}`
       })
 
-      // 数据发生变化
       setTimeout(() => {
-        obj.age = 100
+        obj.value = false
       }, 2000)
     </script>
   </body>

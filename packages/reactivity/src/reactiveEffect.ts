@@ -16,19 +16,15 @@ export function track(target: object, key: string | symbol) {
 
   let depsMap = targetMap.get(target)
   if (!depsMap) {
-    depsMap = new Map()
-    targetMap.set(target, depsMap)
+    targetMap.set(target, (depsMap = new Map()))
   }
 
   let dep = depsMap.get(key)
   if (!dep) {
-    dep = new Set()
-    depsMap.set(key, dep)
+    depsMap.set(key, (dep = new Set()))
   }
 
   dep.add(activeEffect)
-
-  console.log(`[track] 收集依赖:`, key, activeEffect)
 }
 
 /**
@@ -50,6 +46,4 @@ export function trigger(target: object, key: string | symbol) {
       effectFn.run()
     }
   })
-
-  console.log(`[trigger] 触发依赖:`, key)
 }

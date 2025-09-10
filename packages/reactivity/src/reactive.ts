@@ -40,11 +40,23 @@ function createReactiveObject<T extends Target>(
 
   // 已有缓存 Proxy，直接返回
   const existingProxy = proxyMap.get(target)
-  if (existingProxy) return existingProxy
+  if (existingProxy) {
+    return existingProxy
+  }
 
   // 创建新的 Proxy
   const proxy = new Proxy(target, baseHandlers)
   proxyMap.set(target, proxy) // 缓存 Proxy
 
   return proxy
+}
+
+/**
+ * 转换为响应式对象
+ * @description 如果是对象，转换为响应式对象；如果不是，直接返回
+ * @param target
+ * @returns
+ */
+export function toReactive<T extends unknown>(value: T): T {
+  return isObject(value) ? reactive(value) : value
 }

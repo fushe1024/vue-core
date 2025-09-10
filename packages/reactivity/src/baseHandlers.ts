@@ -23,11 +23,13 @@ export const mutableHandlers: ProxyHandler<any> = {
    * 拦截设置属性
    */
   set(target, key, value, receiver) {
-    // 执行原始 set
+    const oldValue = target[key]
     const result = Reflect.set(target, key, value, receiver)
 
-    // 触发依赖
-    trigger(target, key)
+    // 新值和旧值不同时才触发依赖
+    if (oldValue !== value) {
+      trigger(target, key)
+    }
 
     return result
   },
