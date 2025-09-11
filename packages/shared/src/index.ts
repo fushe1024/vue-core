@@ -6,3 +6,10 @@
 export function isObject(val: unknown) {
   return val !== null && typeof val === 'object'
 }
+
+/**
+ * 值是否变化
+ */
+export function hasChanged(value: any, oldValue: any): boolean {
+  return value !== oldValue && !(Number.isNaN(value) && Number.isNaN(oldValue))
+}

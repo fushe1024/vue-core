@@ -8,29 +8,28 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import { reactive, effect } from '../dist/reactivity.esm.js'
+      import { reactive, effect, toRefs } from '../dist/reactivity.esm.js'
 
-      // 响应式数据
-      const obj = reactive({
-        name: '张三',
-        age: 18,
-        userinfo: {
-          sex: '男',
-          height: 1.88,
-        },
-      })
-
-      console.log(obj)
+      const state = reactive({ count: 0, name: 'Vue' })
+      const { count, name } = toRefs(state)
 
       // 副作用函数
       effect(() => {
-        app.innerHTML = `姓名：${obj.name}, 年龄：${obj.age}`
+        app.innerHTML = `姓名：${name.value}, 年龄：${count.value}`
       })
+
+      console.log(count.value)
+      console.log(name.value)
 
       // 数据发生变化
       setTimeout(() => {
-        obj.age = 100
-      }, 2000)
+        count.value++
+        name.value += '~'
+
+        // 变化后的数据
+        console.log(count.value)
+        console.log(name.value)
+      }, 1000)
     </script>
   </body>
 </html>

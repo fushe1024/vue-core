@@ -10,19 +10,19 @@
     <script type="module">
       import { ref, effect } from '../dist/reactivity.esm.js'
 
-      // 响应式数据
-      const obj = ref(true)
+      const count = ref({
+        name: '张三',
+        age: 18,
+      })
 
-      console.log(obj)
-
-      // 副作用函数
       effect(() => {
-        app.innerHTML = `${obj.value}`
+        app.innerHTML = `姓名：${count.value.name}, 年龄，${count.value.age}`
       })
 
       setTimeout(() => {
-        obj.value = false
-      }, 2000)
+        count.value.name = '李四'
+        count.value.age = 20
+      }, 1000)
     </script>
   </body>
 </html>

@@ -1,3 +1,3 @@
 export { reactive } from './reactive'
 export { effect } from './effect'
-export { ref } from './ref'
+export { ref, toRef, toRefs } from './ref'

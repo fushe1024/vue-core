@@ -6,56 +6,50 @@ import { ReactiveFlags } from './constants'
  * 响应式对象接口
  */
 export interface Target {
-  [ReactiveFlags.SKIP]?: boolean // 跳过响应化
-  [ReactiveFlags.IS_REACTIVE]?: boolean // 是否响应式
-  [ReactiveFlags.RAW]?: any // 原始对象
+  [key: string]: any
+  [ReactiveFlags.IS_REACTIVE]?: boolean
+  [ReactiveFlags.RAW]?: any
 }
 
 /**
- * 响应式对象缓存
- * WeakMap key 为原始对象，value 为对应 Proxy
+ * 缓存原始对象 -> Proxy 的映射，避免重复创建
  */
-export const reactiveMap = new WeakMap<Target, any>()
+const reactiveMap = new WeakMap<Target, any>()
 
 /**
- * 将普通对象转换为响应式对象
+ * 将对象转换为响应式对象
  */
 export function reactive<T extends object>(target: T): T {
   return createReactiveObject(target, mutableHandlers, reactiveMap)
 }
 
 /**
- * 创建响应式对象核心函数
+ * 核心方法：创建 Proxy
  */
-function createReactiveObject<T extends Target>(
+function createReactiveObject<T extends object>(
   target: T,
   baseHandlers: ProxyHandler<any>,
-  proxyMap: WeakMap<Target, any>
+  proxyMap: WeakMap<T, any>
 ): T {
-  // 不是对象，直接返回
+  // 非对象直接返回
   if (!isObject(target)) return target
 
-  // 已经是响应式对象，直接返回
-  if (target[ReactiveFlags.IS_REACTIVE]) return target
+  // 已经是响应式对象直接返回
+  if ((target as any)[ReactiveFlags.IS_REACTIVE]) return target
 
-  // 已有缓存 Proxy，直接返回
+  // 已存在代理直接返回
   const existingProxy = proxyMap.get(target)
-  if (existingProxy) {
-    return existingProxy
-  }
+  if (existingProxy) return existingProxy
 
-  // 创建新的 Proxy
+  // 创建新代理并缓存
   const proxy = new Proxy(target, baseHandlers)
-  proxyMap.set(target, proxy) // 缓存 Proxy
+  proxyMap.set(target, proxy)
 
   return proxy
 }
 
 /**
- * 转换为响应式对象
- * @description 如果是对象，转换为响应式对象；如果不是，直接返回
- * @param target
- * @returns
+ * 将值转换为响应式对象，如果不是对象则直接返回
  */
 export function toReactive<T extends unknown>(value: T): T {
   return isObject(value) ? reactive(value) : value

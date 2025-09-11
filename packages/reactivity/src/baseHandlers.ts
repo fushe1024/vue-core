@@ -2,35 +2,26 @@ import { track, trigger } from './reactiveEffect'
 import { ReactiveFlags } from './constants'
 
 /**
- * 响应式对象 Proxy 拦截器
+ * 可变对象的 Proxy handlers
+ * - get: 收集依赖
+ * - set: 值变化时触发依赖
  */
 export const mutableHandlers: ProxyHandler<any> = {
-  /**
-   * 拦截读取属性
-   */
   get(target, key, receiver) {
-    // 内部标识判断
+    // 内部标记直接返回，不收集依赖
     if (key === ReactiveFlags.IS_REACTIVE) return true
 
-    // 收集依赖
-    track(target, key)
-
-    // 保持原始行为（支持继承和 getter）
-    return Reflect.get(target, key, receiver)
+    const res = Reflect.get(target, key, receiver)
+    track(target, key) // 收集依赖
+    return res
   },
 
-  /**
-   * 拦截设置属性
-   */
   set(target, key, value, receiver) {
     const oldValue = target[key]
     const result = Reflect.set(target, key, value, receiver)
-
-    // 新值和旧值不同时才触发依赖
     if (oldValue !== value) {
-      trigger(target, key)
+      trigger(target, key) // 值变化触发依赖
     }
-
     return result
   },
 }
