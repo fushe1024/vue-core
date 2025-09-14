@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>computed 函数</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import { ref, effect, computed } from '../dist/reactivity.esm.js'
+
+      const count = ref(0)
+      const doubleCount = computed(() => {
+        return count.value * 2
+      })
+
+      effect(() => {
+        app.innerHTML = `当前计数：${count.value}, 计数的两倍：${doubleCount.value}`
+      })
+
+      setInterval(() => {
+        count.value++
+      }, 1000)
+    </script>
+  </body>
+</html>

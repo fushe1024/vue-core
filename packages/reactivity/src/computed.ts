@@ -1,33 +1,32 @@
-import { isFunction } from '@vue-core/shared'
 import { type Ref, trackRefValue, triggerRefValue } from './ref'
 import { ReactiveEffect } from './effect'
+import { isFunction } from '@vue-core/shared'
 import { ReactiveFlags } from './constants'
+import { type Dep, createDep } from './dep'
 
 export interface ComputedRef<T> extends Ref<T> {}
 
-/**
- * ComputedRef 实现类
- */
 class ComputedRefImpl<T> implements ComputedRef<T> {
   private _value!: T
   private _dirty = true
   private effect: ReactiveEffect<T>
+  public dep: Dep = createDep()
   public [ReactiveFlags.IS_REF] = true
 
   constructor(getter: () => T, private setter?: (v: T) => void) {
     this.effect = new ReactiveEffect(getter, () => {
       if (!this._dirty) {
         this._dirty = true
-        triggerRefValue(this as any) // 通知外部依赖更新
+        triggerRefValue(this as any) // ✅ 触发外部依赖
       }
     })
   }
 
   get value(): T {
-    trackRefValue(this as any) // 收集依赖
+    trackRefValue(this as any) // ✅ 收集外部依赖
     if (this._dirty) {
       this._dirty = false
-      this._value = this.effect.run()
+      this._value = this.effect.run()!
     }
     return this._value
   }
@@ -41,9 +40,6 @@ class ComputedRefImpl<T> implements ComputedRef<T> {
   }
 }
 
-/**
- * computed API
- */
 export function computed<T>(
   getterOrOptions: (() => T) | { get: () => T; set: (v: T) => void }
 ): ComputedRef<T> {
