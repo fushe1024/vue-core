@@ -1,15 +1,20 @@
-/**
- * 检查值是否为对象
- * @param val 要检查的值
- * @returns 如果值是对象（非 null 且类型为 'object'），则返回 true；否则返回 false
- */
-export function isObject(val: unknown) {
-  return val !== null && typeof val === 'object'
-}
+// check whether a value is array
+export const isArray = Array.isArray
 
-/**
- * 值是否变化
- */
-export function hasChanged(value: any, oldValue: any): boolean {
-  return value !== oldValue && !(Number.isNaN(value) && Number.isNaN(oldValue))
-}
+// check whether a value is function
+export const isFunction = (val: unknown): val is Function =>
+  typeof val === 'function'
+
+// check whether a value is string
+export const isString = (val: unknown): val is string => typeof val === 'string'
+
+// check whether a value is symbol
+export const isSymbol = (val: unknown): val is symbol => typeof val === 'symbol'
+
+// check whether a value is object
+export const isObject = (val: unknown): val is Record<any, any> =>
+  val !== null && typeof val === 'object'
+
+// compare whether a value has changed, accounting for NaN.
+export const hasChanged = (value: any, oldValue: any): boolean =>
+  !Object.is(value, oldValue)

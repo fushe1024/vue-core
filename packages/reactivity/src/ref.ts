@@ -1,72 +1,67 @@
 import { isObject, hasChanged } from '@vue-core/shared'
 import { toReactive } from './reactive'
-import { activeEffect } from './effect'
+import { activeEffect, trackEffect, triggerEffects } from './effect'
 import { ReactiveFlags } from './constants'
-import { Dep, createDep, addDep, triggerDep } from './dep'
+import { type Dep, createDep } from './dep'
 
-/**
- * Ref 接口声明
- * - value: 当前值
- * - [ReactiveFlags.IS_REF]: 标记为 ref
- */
 export interface Ref<T = any> {
   value: T
   [ReactiveFlags.IS_REF]: boolean
 }
 
-/**
- * 创建 ref
- */
 export function ref<T>(value: T): Ref<T> {
   return new RefImpl(value)
 }
 
 /**
- * RefImpl：ref 实现类
- * - 对象值会被递归转换为 reactive（除非已是 reactive 或 ref）
- * - getter 收集依赖，setter 触发依赖
+ * RefImpl：ref 的核心实现
  */
 class RefImpl<T> {
-  private _value: T // 响应式值
-  private _rawValue: T // 原始值，用于比较是否变化
-  public dep: Dep // 存储依赖的集合
+  private _value: T
+  private _rawValue: T
+  public dep: Dep
   public [ReactiveFlags.IS_REF] = true
 
   constructor(value: T) {
     this._rawValue = value
-    // 对象类型且未被 reactive/ref 包裹时进行响应式转换
-    const shouldConvert =
-      isObject(value) &&
-      !(value as any)[ReactiveFlags.IS_REACTIVE] &&
-      !(value as any)[ReactiveFlags.IS_REF]
-
-    this._value = shouldConvert ? toReactive(value) : value
-    this.dep = createDep(() => this.dep.clear())
+    this._value = isObject(value) ? toReactive(value) : value
+    this.dep = createDep()
   }
 
   get value() {
-    // 收集依赖
-    if (activeEffect) addDep(this.dep, activeEffect)
+    // 依赖收集
+    trackRefValue(this)
     return this._value
   }
 
   set value(newValue: T) {
     if (hasChanged(newValue, this._rawValue)) {
       this._rawValue = newValue
-      // 对象类型且未被 reactive/ref 包裹时进行响应式转换
-      const shouldConvert =
-        isObject(newValue) &&
-        !(newValue as any)[ReactiveFlags.IS_REACTIVE] &&
-        !(newValue as any)[ReactiveFlags.IS_REF]
-      this._value = shouldConvert ? toReactive(newValue) : newValue
+      this._value = isObject(newValue) ? toReactive(newValue) : newValue
       // 触发依赖
-      triggerDep(this.dep, activeEffect)
+      triggerRefValue(this)
     }
   }
 }
 
 /**
- * toRef：把对象的某个属性包装成 ref
+ * 收集 ref 依赖
+ */
+export function trackRefValue(ref: RefImpl<any>) {
+  if (activeEffect) {
+    trackEffect(ref.dep)
+  }
+}
+
+/**
+ * 触发 ref 依赖
+ */
+export function triggerRefValue(ref: RefImpl<any>) {
+  triggerEffects(ref.dep)
+}
+
+/**
+ * toRef：把对象的某个属性变成 ref
  */
 export function toRef<T extends object, K extends keyof T>(
   object: T,
@@ -76,38 +71,31 @@ export function toRef<T extends object, K extends keyof T>(
 }
 
 /**
- * ObjectRefImpl：对象属性的 ref 实现
+ * ObjectRefImpl：包装对象的某个属性
  */
-class ObjectRefImpl<T extends object, K extends keyof T> implements Ref<T[K]> {
+class ObjectRefImpl<T extends object, K extends keyof T> {
   public [ReactiveFlags.IS_REF] = true
-  public dep: Dep
 
-  constructor(private _object: T, private _key: K) {
-    this.dep = createDep(() => this.dep.clear())
-  }
+  constructor(private _object: T, private _key: K) {}
 
-  get value(): T[K] {
-    if (activeEffect) addDep(this.dep, activeEffect)
+  get value() {
     return this._object[this._key]
   }
 
   set value(newValue: T[K]) {
-    if (newValue !== this._object[this._key]) {
-      this._object[this._key] = newValue
-      triggerDep(this.dep, activeEffect)
-    }
+    this._object[this._key] = newValue
   }
 }
 
 /**
- * toRefs：把对象的所有属性都转换为 ref
+ * toRefs：把对象的所有属性变成 ref
  */
 export function toRefs<T extends object>(
   object: T
 ): { [K in keyof T]: Ref<T[K]> } {
-  const result: any = {}
+  const ret: any = {}
   for (const key in object) {
-    result[key] = toRef(object, key)
+    ret[key] = toRef(object, key)
   }
-  return result
+  return ret
 }
