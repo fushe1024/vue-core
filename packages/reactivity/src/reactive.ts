@@ -54,3 +54,31 @@ function createReactiveObject<T extends object>(
 export function toReactive<T extends unknown>(value: T): T {
   return isObject(value) ? reactive(value) : value
 }
+
+/**
+ * isReactive：判断是否是响应式对象
+ */
+export function isReactive(target: Target) {
+  return target[ReactiveFlags.IS_REACTIVE]
+}
+
+/**
+ * isReadonly：判断是否是只读对象
+ */
+export function isReadonly(target: Target) {
+  return target[ReactiveFlags.IS_READONLY]
+}
+
+/**
+ * isShallow：判断是否是浅层响应式对象
+ */
+export function isShallow(target: Target) {
+  return target[ReactiveFlags.IS_SHALLOW]
+}
+
+/**
+ * isProxy：判断是否是代理对象
+ */
+export function isProxy(target: Target) {
+  return isReactive(target) || isReadonly(target)
+}

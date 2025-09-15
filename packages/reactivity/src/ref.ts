@@ -99,3 +99,10 @@ export function toRefs<T extends object>(
   }
   return ret
 }
+
+/**
+ * isRef：判断是否是 ref
+ */
+export function isRef(ref: RefImpl<any>) {
+  return ref[ReactiveFlags.IS_REF]
+}

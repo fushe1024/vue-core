@@ -17,13 +17,13 @@ class ComputedRefImpl<T> implements ComputedRef<T> {
     this.effect = new ReactiveEffect(getter, () => {
       if (!this._dirty) {
         this._dirty = true
-        triggerRefValue(this as any) // ✅ 触发外部依赖
+        triggerRefValue(this as any) // 触发外部依赖
       }
     })
   }
 
   get value(): T {
-    trackRefValue(this as any) // ✅ 收集外部依赖
+    trackRefValue(this as any) // 收集外部依赖
     if (this._dirty) {
       this._dirty = false
       this._value = this.effect.run()!
