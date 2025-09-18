@@ -15,5 +15,10 @@
       "esm-bundler",
       "cjs"
     ]
+  },
+  "dependencies": {
+    "@vue-core/shared": "workspace:*",
+    "@vue-core/reactivity": "workspace:*",
+    "@vue-core/runtime-core": "workspace:*"
   }
 }

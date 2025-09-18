@@ -25,26 +25,9 @@ importers:
 
   packages/compiler-dom: {}
 
-  packages/compiler-sfc:
-    dependencies:
-      '@vue-core/compiler-core':
-        specifier: workspace:*
-        version: link:../compiler-core
-      '@vue-core/compiler-dom':
-        specifier: workspace:*
-        version: link:../compiler-dom
-      '@vue-core/shared':
-        specifier: workspace:*
-        version: link:../shared
+  packages/compiler-sfc: {}
 
-  packages/compiler-ssr:
-    dependencies:
-      '@vue-core/compiler-dom':
-        specifier: workspace:*
-        version: link:../compiler-dom
-      '@vue-core/shared':
-        specifier: workspace:*
-        version: link:../shared
+  packages/compiler-ssr: {}
 
   packages/reactivity:
     dependencies:
@@ -63,6 +46,9 @@ importers:
 
   packages/runtime-dom:
     dependencies:
+      '@vue-core/reactivity':
+        specifier: workspace:*
+        version: link:../reactivity
       '@vue-core/runtime-core':
         specifier: workspace:*
         version: link:../runtime-core
@@ -70,20 +56,9 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
-  packages/runtime-test:
-    dependencies:
-      '@vue-core/runtime-core':
-        specifier: workspace:*
-        version: link:../runtime-core
+  packages/runtime-test: {}
 
-  packages/server-renderer:
-    dependencies:
-      '@vue-core/runtime-core':
-        specifier: workspace:*
-        version: link:../runtime-core
-      '@vue-core/shared':
-        specifier: workspace:*
-        version: link:../shared
+  packages/server-renderer: {}
 
   packages/shared: {}
 
@@ -99,11 +74,7 @@ importers:
         specifier: workspace:*
         version: link:../server-renderer
 
-  packages/vue-compat:
-    dependencies:
-      '@vue-core/vue':
-        specifier: workspace:*
-        version: link:../vue
+  packages/vue-compat: {}
 
 packages:
 

@@ -18,3 +18,13 @@ export const isObject = (val: unknown): val is Record<any, any> =>
 // compare whether a value has changed, accounting for NaN.
 export const hasChanged = (value: any, oldValue: any): boolean =>
   !Object.is(value, oldValue)
+
+// check whether a key is a native event
+export const isOn = (key: string) =>
+  key.charCodeAt(0) === 111 /* o */ &&
+  key.charCodeAt(1) === 110 /* n */ &&
+  // uppercase letter
+  (key.charCodeAt(2) > 122 || key.charCodeAt(2) < 97)
+
+// extend object
+export const extend = Object.assign
