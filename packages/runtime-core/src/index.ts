@@ -17,3 +17,5 @@ export {
   computed,
 } from '@vue-core/reactivity'
 export { watch, watchEffect } from './apiWatch'
+export { h } from './h'
+export { createRenderer } from './renderer'

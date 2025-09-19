@@ -9,3 +9,5 @@ const randerOptions = extend(nodeOps, { patchProp })
 export function createRenderer() {
   return randerOptions
 }
+
+export * from '@vue-core/runtime-core'
