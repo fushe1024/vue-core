@@ -1,4 +1,5 @@
 // Core API ------------------------------------------------------------------
+
 export {
   // core
   ref,
@@ -17,5 +18,16 @@ export {
   computed,
 } from '@vue-core/reactivity'
 export { watch, watchEffect } from './apiWatch'
+
+// Advanced API ----------------------------------------------------------------
+
+// For raw render function users
 export { h } from './h'
+// VNode types
+export { Fragment, Text, Comment, Static } from './vnode'
+
+// Custom Renderer API ---------------------------------------------------------
 export { createRenderer } from './renderer'
+
+// Types -----------------------------------------------------------------------
+export type { VNode } from './vnode'

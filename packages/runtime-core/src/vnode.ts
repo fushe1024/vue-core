@@ -12,6 +12,12 @@ export interface VNode {
   shapeFlag: number // 类型标记（位运算优化）
 }
 
+// 特殊 VNode 类型
+export const Fragment = Symbol.for('v-fgt')
+export const Text = Symbol.for('v-txt')
+export const Comment = Symbol.for('v-cmt')
+export const Static = Symbol.for('v-stc')
+
 /**
  * 创建 VNode
  * - 根据 type 判断是 element 还是 component
@@ -21,7 +27,9 @@ export function createVNode(type: any, props?: any, children?: any): VNode {
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
     : isObject(type)
-    ? ShapeFlags.COMPONENT
+    ? ShapeFlags.STATEFUL_COMPONENT
+    : isFunction(type)
+    ? ShapeFlags.FUNCTIONAL_COMPONENT
     : 0
 
   return createBaseVNode(type, props, children, shapeFlag)
