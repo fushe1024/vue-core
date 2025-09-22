@@ -5,11 +5,7 @@ import { patchDOMProp } from './modules/props'
 import { patchEvent } from './modules/events'
 import { isOn } from '@vue-core/shared'
 
-/**
- * 统一更新 DOM 属性的函数
- * - vnode diff 过程中调用
- * - 根据 key 分发到对应的处理逻辑
- */
+// 统一更新 DOM 属性，根据 key 分发到对应逻辑
 export const patchProp = (
   el: Element,
   key: string,
@@ -17,31 +13,22 @@ export const patchProp = (
   nextValue: any
 ) => {
   if (key === 'class') {
-    // 类名处理
-    patchClass(el, nextValue)
+    patchClass(el, nextValue) // 类名处理
   } else if (key === 'style') {
-    // 样式处理
-    patchStyle(el, prevValue, nextValue)
+    patchStyle(el, prevValue, nextValue) // 样式处理
   } else if (isOn(key)) {
-    // 事件处理
-    patchEvent(el, key, prevValue, nextValue)
+    patchEvent(el, key, prevValue, nextValue) // 事件处理
   } else if (shouldSetAsProp(el, key)) {
-    // 作为 DOM property 设置
-    patchDOMProp(el, key, nextValue)
+    patchDOMProp(el, key, nextValue) // 作为 DOM property 设置
   } else {
-    // 否则作为 attribute 设置
-    patchAttr(el, key, nextValue)
+    patchAttr(el, key, nextValue) // 作为 attribute 设置
   }
 }
 
-/**
- * 判断属性是否应该作为 DOM property 设置
- * - 规则：一般能在 DOM 对象上直接访问的 key 用 property
- * - 特殊情况：form 属性必须走 setAttribute，避免覆盖 form 属性
- */
+// 判断属性是否应作为 DOM property 设置
 function shouldSetAsProp(el: Element, key: string): boolean {
   if (key === 'form' && el.tagName === 'INPUT') {
-    return false
+    return false // 特殊表单属性
   }
-  return key in el
+  return key in el // 能在 DOM 对象上访问的 key 使用 property
 }

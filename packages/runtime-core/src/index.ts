@@ -14,10 +14,9 @@ export {
   // effect
   effect,
   ReactiveEffect,
-  // computed
-  computed,
 } from '@vue-core/reactivity'
 export { watch, watchEffect } from './apiWatch'
+export { computed } from './apiComputed'
 
 // Advanced API ----------------------------------------------------------------
 

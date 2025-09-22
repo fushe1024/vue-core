@@ -32,6 +32,7 @@ export function h(type: any, propsOrChildren?: any, children?: any): VNode {
     else if (l === 3 && isVNode(children)) {
       children = [children]
     }
+    // 情况 4：h('div', {}, 'text') 或 h('div', {}, [vnode1, vnode2])
     return createVNode(type, propsOrChildren, children)
   }
 }

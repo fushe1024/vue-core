@@ -3,8 +3,8 @@ import { isFunction, isObject } from '@vue-core/shared'
 
 // 监听选项
 interface WatchOptions {
-  immediate?: boolean
-  deep?: boolean
+  immediate?: boolean // 是否立即执行回调
+  deep?: boolean // 是否深度监听
 }
 
 // 监听响应式数据变化
@@ -16,7 +16,7 @@ export function watch(
   return doWatch(source, cb, options)
 }
 
-// 监听响应式数据变化
+// 响应式副作用函数监听
 export function watchEffect(effectFn: () => void) {
   return doWatch(effectFn, null)
 }
@@ -41,7 +41,7 @@ function doWatch(
     getter = () => {}
   }
 
-  // 深度监听对象时递归访问属性
+  // 深度监听，递归访问所有属性
   if (deep) {
     const baseGetter = getter
     getter = () => traverse(baseGetter())
@@ -54,12 +54,11 @@ function doWatch(
     if (cb) {
       const newValue = effect.run()
       if (deep || newValue !== oldValue) {
-        cb(newValue, oldValue)
+        cb(newValue, oldValue) // 执行回调
         oldValue = newValue
       }
     } else {
-      // watchEffect
-      effect.run() // 直接执行副作用函数，并收集依赖
+      effect.run() // watchEffect 执行副作用
     }
   }
 
@@ -69,33 +68,22 @@ function doWatch(
   if (cb) {
     immediate ? job() : (oldValue = effect.run())
   } else {
-    // watchEffect
-    effect.run() // 直接执行副作用函数，并收集依赖
+    effect.run() // watchEffect 初始化执行
   }
 
   // 返回停止监听函数
   return () => effect.stop()
 }
 
-/**
- * 递归访问对象或数组的所有属性，触发依赖收集
- * @param value 响应式对象或数组
- * @param seen 已访问过的对象集合，防止循环引用
- */
+// 递归访问对象或数组所有属性，触发依赖收集
 function traverse(value: any, seen = new Set()): any {
-  // 非对象或已访问过，直接返回
-  if (!isObject(value) || seen.has(value)) return value
+  if (!isObject(value) || seen.has(value)) return value // 非对象或已访问过，直接返回
 
-  // 标记为已访问
-  seen.add(value)
+  seen.add(value) // 标记已访问
+  const keys = Reflect.ownKeys(value) // 获取所有属性
 
-  // 获取对象或数组的所有属性（包括 Symbol）
-  const keys = Reflect.ownKeys(value)
-
-  // 遍历所有属性递归访问
   for (const key of keys) {
-    const val = (value as any)[key]
-    traverse(val, seen)
+    traverse((value as any)[key], seen) // 递归访问
   }
 
   return value
