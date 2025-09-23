@@ -19,6 +19,7 @@ export interface VNode {
   props: any // 节点属性
   children: any // 子节点
   shapeFlag: number // 类型标记（位运算优化）
+  [key: string]: any // 自定义属性
 }
 
 // 特殊 VNode 类型
@@ -71,6 +72,7 @@ function createBaseVNode(
     __v_isVNode: true,
     type,
     props,
+    key: props && normalizeKey(props),
     children,
     shapeFlag,
   } as VNode
@@ -103,4 +105,14 @@ function normalizeChildren(vnode: VNode, children: unknown) {
 // 判断对象是否为 VNode
 export function isVNode(node: any): node is VNode {
   return node ? node.__v_isVNode === true : false
+}
+
+// 判断是否为相同的 VNode
+export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
+  return n1.type === n2.type && n1.key === n2.key
+}
+
+// 标准化 key
+const normalizeKey = ({ key }: VNode) => {
+  return key != null ? key : null
 }
