@@ -1,4 +1,11 @@
-import { isSameVNodeType, VNode } from './vnode'
+import {
+  isSameVNodeType,
+  VNode,
+  Fragment,
+  Text,
+  Comment,
+  Static,
+} from './vnode'
 import { ShapeFlags } from '@vue-core/shared'
 
 // 创建渲染器
@@ -58,7 +65,11 @@ function baseCreateRenderer(options: any): any {
 
   // 卸载 vnode
   const unmount = (vnode: VNode) => {
-    hostRemove(vnode.el)
+    if (vnode.type === Fragment) {
+      unmountChildren(vnode.children)
+    } else {
+      hostRemove(vnode.el)
+    }
   }
 
   // 卸载子节点数组：卸载数组中的每个 vnode
@@ -218,8 +229,6 @@ function baseCreateRenderer(options: any): any {
         }
       }
 
-      // 5.2 loop through old children left to be patched and try to patch
-      // matching nodes & remove nodes that are no longer present
       const toBePatched = e2 - s2 + 1
       const newIndexToOldIndexMap = new Array(toBePatched)
 
@@ -232,10 +241,14 @@ function baseCreateRenderer(options: any): any {
             // 若未找到新子节点的索引：卸载旧子节点
             unmount(prevChild)
           } else {
+            newIndexToOldIndexMap[newIndex - s2] = i
             patch(prevChild, c2[newIndex], container)
           }
         }
       }
+
+      let increasingNewIndexSequence = getSequence(newIndexToOldIndexMap)
+      let j = increasingNewIndexSequence.length - 1
 
       // looping backwards so that we can use last patched node as anchor
       for (i = toBePatched - 1; i >= 0; i--) {
@@ -247,7 +260,11 @@ function baseCreateRenderer(options: any): any {
           // 若新子节点没有元素：挂载新子节点
           patch(null, nextChild, container, anchor)
         } else {
-          hostInsert(nextChild.el, container, anchor)
+          if (i == increasingNewIndexSequence[j]) {
+            j--
+          } else {
+            hostInsert(nextChild.el, container, anchor)
+          }
         }
       }
     }
@@ -283,6 +300,37 @@ function baseCreateRenderer(options: any): any {
     }
   }
 
+  // 处理文本节点
+  const processText = (n1: VNode | null, n2: VNode, container: Element) => {
+    if (n1 == null) {
+      hostInsert((n2.el = hostCreateText(n2.children)), container)
+    } else {
+      const el = (n2.el = n1.el)
+      if (n1.children !== n2.children) {
+        hostSetText(el, n2.children)
+      }
+    }
+  }
+
+  // 处理注释节点
+  const processComment = (n1: VNode | null, n2: VNode, container: Element) => {
+    if (n1 == null) {
+      hostInsert((n2.el = hostCreateComment(n2.children) || ''), container)
+    } else {
+      // there's no support for dynamic comments
+      n2.el = n1.el
+    }
+  }
+
+  // 处理碎片节点
+  const processFragment = (n1: VNode | null, n2: VNode, container: Element) => {
+    if (n1 == null) {
+      mountChildren(n2.children, container)
+    } else {
+      patchChildren(n1, n2, container)
+    }
+  }
+
   // 补丁函数：挂载或更新 vnode
   const patch = (
     n1: VNode | null,
@@ -300,7 +348,21 @@ function baseCreateRenderer(options: any): any {
       n1 = null
     }
 
-    processElement(n1, n2, container, anchor)
+    const { type } = n2
+    switch (type) {
+      case Text:
+        processText(n1, n2, container)
+        break
+      case Comment:
+        processComment(n1, n2, container)
+        break
+      case Fragment:
+        processFragment(n1, n2, container)
+        break
+      default:
+        processElement(n1, n2, container, anchor)
+        break
+    }
   }
 
   // 渲染函数：渲染或卸载 vnode
@@ -319,4 +381,59 @@ function baseCreateRenderer(options: any): any {
   return {
     render,
   }
+}
+
+// 计算数组 arr 的最长递增子序列 (LIS)，返回 LIS 对应的索引数组
+// 参考：https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+function getSequence(arr: number[]): number[] {
+  const prevIndices = arr.slice() // 记录每个元素在 LIS 中的前驱索引，方便回溯
+  const result = [0] // LIS 的索引序列（存储 arr 的索引）
+  let currIndex, lastLISIndex, left, right, mid
+  const len = arr.length
+
+  // 遍历 arr，构建 LIS
+  for (currIndex = 0; currIndex < len; currIndex++) {
+    const currValue = arr[currIndex]
+    if (currValue !== 0) {
+      // 0 表示新节点不存在映射，跳过
+      lastLISIndex = result[result.length - 1]
+
+      // 如果当前值大于 LIS 最后一个 → 直接追加到 LIS
+      if (arr[lastLISIndex] < currValue) {
+        prevIndices[currIndex] = lastLISIndex // 记录前驱索引
+        result.push(currIndex)
+        continue
+      }
+
+      // 否则在 LIS 中用二分查找，找到第一个 >= 当前值的位置
+      left = 0
+      right = result.length - 1
+      while (left < right) {
+        mid = (left + right) >> 1
+        if (arr[result[mid]] < currValue) {
+          left = mid + 1
+        } else {
+          right = mid
+        }
+      }
+
+      // 如果找到的位置的值比当前值大 → 替换，保持 LIS 可扩展性
+      if (currValue < arr[result[left]]) {
+        if (left > 0) {
+          prevIndices[currIndex] = result[left - 1] // 更新前驱索引
+        }
+        result[left] = currIndex
+      }
+    }
+  }
+
+  // 回溯 prevIndices 构建最终 LIS 的索引序列
+  left = result.length
+  right = result[left - 1]
+  while (left-- > 0) {
+    result[left] = right
+    right = prevIndices[right]
+  }
+
+  return result // 返回 LIS 对应的索引数组
 }
